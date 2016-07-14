@@ -1,0 +1,37 @@
+{% extends "_layouts/cp" %}
+{#
+/**
+ * Analytics plugin for Craft CMS
+ *
+ * Analytics Settings.twig
+ *
+ * @author    Vadim Goncharov
+ * @copyright Copyright (c) 2016 Vadim Goncharov
+ * @link      http://roundhouseagency.com
+ * @package   Analytics
+ * @since     1.0.0
+ */
+#}
+
+{% set content %}
+
+{% import "_includes/forms" as forms %}
+
+<p>{{ token.accessToken }}</p>
+<p>{{ token.refreshToken }}</p>
+<p>{{ token.endOfLife }}</p>
+<p>{{ date }}</p>
+
+{% if token %}
+  <a class="btn submit" href="{{ actionUrl('analytics/authorize/disconnect') }}">{{"Disconnect From Google"|t}}</a>
+{% else %}
+  <a class="btn submit" href="{{ actionUrl('analytics/authorize/connect') }}">{{"Connect to Google"|t}}</a>
+{% endif %}
+
+{% for account in accounts %}
+  <p>{{ account.name }}</p>
+{% endfor %}
+
+
+
+{% endset %}

@@ -1,0 +1,26 @@
+{#
+/**
+ * Analytics plugin for Craft CMS
+ *
+ * AnalyticsWidget Settings
+ *
+ * @author    Vadim Goncharov
+ * @copyright Copyright (c) 2016 Vadim Goncharov
+ * @link      http://roundhouseagency.com
+ * @package   Analytics
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% includeCssResource "analytics/css/Analytics_Style.css" %}
+{% includeJsResource "analytics/js/Analytics_Script.js" %}
+
+{{ forms.textField({
+    label: 'Some Setting',
+    instructions: 'Enter some setting here.',
+    id: 'someSetting',
+    name: 'someSetting',
+    value: settings['someSetting']})
+}}

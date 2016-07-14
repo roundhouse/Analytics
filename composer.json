@@ -1,0 +1,14 @@
+{
+	"name": "roundhouse/analytics",
+	"description": "Google analytics reporting for your craft website",
+	"type": "craft-plugin",
+	"authors": [
+		{
+			"name": "Vadim Goncharov",
+			"homepage": "http://roundhouseagency.com"
+		}
+	],
+	"require": {
+		"google/apiclient": "^2.0"
+	}
+}
