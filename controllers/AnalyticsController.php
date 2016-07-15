@@ -13,9 +13,6 @@
 
 namespace Craft;
 
-use Google_Client;
-use Google_Service_Analytics;
-
 class AnalyticsController extends BaseController
 {
     // Properties
@@ -28,47 +25,76 @@ class AnalyticsController extends BaseController
 
     // Public Methods
     // =========================================================================
-
-    /**
-     * @return array
-     */
-    public function actionSettingsIndex()
+    
+    // Settings Index
+    public function actionSettings()
     {
-        $plugin     = craft()->plugins->getPlugin('analytics');
-        $provider   = craft()->oauth->getProvider('google');
-        $token      = craft()->analytics->getToken();
+        $plugin = craft()->plugins->getPlugin('analytics');
+        $provider = craft()->oauth->getProvider('google');
 
-        // Variables
-        $variables['token'] = '';
+        $variables = array(
+            'provider' => false,
+            'account' => false,
+            'token' => false,
+            'error' => false,
+            'settings' => $plugin->getSettings()
+        );
 
-        if ($token) {
-            $variables['token'] = $token;
-            $token->refreshToken;
+
+        if ($provider && $provider->isConfigured()) {
+            $token = craft()->analytics_authorize->getToken();
+            if ($token) {
+                $variables['token'] = $token;
+                $variables['provider'] = $provider;
+
+                $account = $provider->getAccount($token);
+                $variables['account'] = $account;
+            }
         }
-        //  Google api access
-        // $client = new Google_Client();
-        // $client->setAccessToken($token->accessToken);
 
-        // // $expiry = getDate().now + $token->endOfLife;
-        $dateNow = DateTimeHelper::currentTimeStamp();
-
-        // // var_dump($token->refreshToken);
-
-        // if ($token->endOfLife < $dateNow) {
-        //     var_dump('token exprired');
-        // } else {
-        //     var_dump('token is valid');
-        // }
-
-
-        // die();
-
-        // $accounts = craft()->analytics_managementAccounts->getManagementAccounts($token);
-        // $variables['accounts'] = $accounts;
-        
-        
-        $variables['date'] = $dateNow;
-
-        $this->renderTemplate('analytics/settings', $variables);
+        $this->renderTemplate('analytics/settings/index', $variables);
     }
+
+    // /**
+    //  * @return array
+    //  */
+    // public function actionIndex()
+    // {
+    //     // $plugin     = craft()->plugins->getPlugin('analytics');
+    //     // $provider   = craft()->oauth->getProvider('google');
+    //     // $token      = craft()->analytics->getToken();
+
+    //     // Variables
+    //     // $variables['token'] = '';
+
+    //     // if ($token) {
+    //     //     $variables['token'] = $token;
+    //     //     $token->refreshToken;
+    //     // }
+    //     //  Google api access
+    //     // $client = new Google_Client();
+    //     // $client->setAccessToken($token->accessToken);
+
+    //     // // $expiry = getDate().now + $token->endOfLife;
+
+    //     // // var_dump($token->refreshToken);
+
+    //     // if ($token->endOfLife < $dateNow) {
+    //     //     var_dump('token exprired');
+    //     // } else {
+    //     //     var_dump('token is valid');
+    //     // }
+
+
+    //     // die();
+
+    //     // $accounts = craft()->analytics_managementAccounts->getManagementAccounts($token);
+    //     // $variables['accounts'] = $accounts;
+        
+        
+    //     $dateNow = DateTimeHelper::currentTimeStamp();
+    //     $variables['date'] = $dateNow;
+
+    //     $this->renderTemplate('analytics/pages/index', $variables);
+    // }
 }

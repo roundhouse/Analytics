@@ -1,0 +1,88 @@
+{% extends "analytics/_layouts/settings" %}
+
+{% set selectedSubnavItem = "Settings" %}
+{% set title = "Settings"|t %}
+
+
+{% set content %}
+    
+    <h2>Settings</h2>
+    {{ settings.tokenId |inspect }}
+    
+    <h2>Provider</h2>
+    {{ provider |inspect }}
+
+    <h2>Account</h2>
+    {{ account |inspect }}
+    
+    <h2>Token</h2>
+    {{ token |inspect }}
+
+
+    {# 'provider' => false,
+    'account' => false,
+    'token' => false,
+    'error' => false,
+    'settings #}
+
+    {% import "_includes/forms" as forms %}
+
+    {# <form method="post" action="" accept-charset="UTF-8">
+        {{ getCsrfInput() }}
+        <input type="hidden" name="action" value="analytics/saveSettings">
+        <input type="hidden" name="redirect" value="analytics/settings" />
+
+        <h2>{{ "First setup Google Application"|t }}</h2>
+        <p>Go to <a href="https://console.developers.google.com/" target="_blank">Google Developer Console</a> and create a new project.</p>
+
+        {{ forms.textField({
+            label: 'Web Origin'|t,
+            value: siteUrl,
+            readonly: true,
+        }) }}
+
+        {{ forms.textField({
+            label: 'Redirect URI'|t,
+            value: siteUrl, 
+            readonly: true,
+        }) }}
+
+
+        {{ forms.textField({
+            label: 'Client ID'|t,
+            required: true,
+            name: 'settings[clientId]',
+            placeholder: 'Enter Client ID'|t,
+            value: settings.clientId is defined ? settings.clientId : null,
+            errors: settings.clientId is defined ? settings.errors('clientId') : null
+        }) }}
+
+        {{ forms.textField({
+            label: 'Client Secret'|t,
+            required: true,
+            name: 'settings[clientSecret]',
+            placeholder: 'Enter Client Secret'|t,
+            value: settings.clientSecret is defined ? settings.clientSecret : null,
+            errors: settings.clientSecret is defined ? settings.errors('clientSecret') : null
+        }) }}
+
+        <div class="buttons">
+            <input class="btn submit" type="submit" value="{{ 'Save Application Settings'|t }}">
+        </div>
+
+        <hr />
+
+    </form> #}
+
+
+
+     
+  {% if token %}
+     <a class="btn submit" href="{{ actionUrl('analytics/authorize/disconnect') }}">{{"Disconnect From Google"|t}}</a>
+   {% else %}
+     <a class="btn submit" href="{{ actionUrl('analytics/authorize/connect') }}">{{"Connect to Google"|t}}</a>
+   {% endif %}
+
+  
+
+{% endset %}

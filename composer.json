@@ -9,6 +9,7 @@
 		}
 	],
 	"require": {
+		"league/oauth2-client": "1.4.1@dev",
 		"google/apiclient": "^2.0"
 	}
 }

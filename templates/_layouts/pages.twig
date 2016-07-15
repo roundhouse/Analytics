@@ -1,0 +1,23 @@
+{#
+/**
+ * Analytics plugin for Craft CMS
+ *
+ * Analytics Pages
+ *
+ * @author    Vadim Goncharov
+ * @copyright Copyright (c) 2016 Vadim Goncharov
+ * @link      http://roundhouseagency.com
+ * @package   Analytics
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+
+{% hook 'analytics.prepCpTemplate' %}
+
+{% set crumbs = [
+  { label: "Analytics"|t, url: url('analytics/dashboard') },
+  { label: "Settings"|t, url: url('analytics/settings') }
+] %}
+

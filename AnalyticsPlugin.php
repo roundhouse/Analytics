@@ -23,6 +23,10 @@ class AnalyticsPlugin extends BasePlugin
     {
         require_once(CRAFT_PLUGINS_PATH.'analytics/vendor/autoload.php');
 
+        if (craft()->request->isCpRequest()) {
+            craft()->templates->hook('analytics.prepCpTemplate', array($this, 'prepCpTemplate'));
+        }
+
         parent::init();
     }
 
@@ -95,7 +99,7 @@ class AnalyticsPlugin extends BasePlugin
      */
     public function hasCpSection()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -104,8 +108,16 @@ class AnalyticsPlugin extends BasePlugin
     public function registerCpRoutes()
     {
         return array(
-            'analytics/settings' => array('action' => "analytics/settingsIndex")
+            'analytics' => array('action' => "analytics/index"),
+            'analytics/settings' => array('action' => "analytics/settings"),
         );
+    }
+
+    public function prepCpTemplate(&$context)
+    {
+        $context['subnav'] = array();
+        $context['subnav']['dashboard'] = array('icon' => 'settings', 'label' => Craft::t('Dashboard'), 'url' => 'analytics');
+        $context['subnav']['settings'] = array('icon' => 'settings', 'label' => Craft::t('Settings'), 'url' => 'analytics/settings');
     }
 
     /**
@@ -148,8 +160,9 @@ class AnalyticsPlugin extends BasePlugin
     protected function defineSettings()
     {
         return array(
-            'tokenId' => array(AttributeType::Number),
+            'tokenId' => AttributeType::Number,
         );
+
     }
 
     /**
@@ -157,7 +170,7 @@ class AnalyticsPlugin extends BasePlugin
      */
     public function getSettingsHtml()
     {
-       return craft()->templates->render('analytics/settings', array(
+       return craft()->templates->render('analytics/settings/index', array(
            'settings' => $this->getSettings()
        ));
     }

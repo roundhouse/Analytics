@@ -13,24 +13,16 @@
 
 namespace Craft;
 
+use Google_Client;
+
 class Analytics_AuthorizeController extends BaseController
 {
-    // Properties
-    // =========================================================================
-
-    /**
-     * @var string
-     */
     private $handle = 'google';
 
     // Public Methods
     // =========================================================================
 
-    /**
-     * Connect to Google
-     * 
-     * @return null
-     */
+    // Connect to Google
     public function actionConnect()
     {
         $referer = craft()->httpSession->get('google.referer');
@@ -40,23 +32,21 @@ class Analytics_AuthorizeController extends BaseController
             craft()->httpSession->add('google.referer', $referer);
         }
 
-        $scope = [
-            'https://www.googleapis.com/auth/analytics.readonly'
-        ];
-
-        $authorizationOptions = [
+        // Build Request
+        $scope = ['https://www.googleapis.com/auth/analytics.readonly'];
+        $options = [
             'access_type' => 'offline'
         ];
 
         if ($response = craft()->oauth->connect([
-            'plugin'    => 'analytics',
-            'provider'  => $this->handle,
-            'scope'     => $scope,
-            'authorizationOptions'  => $authorizationOptions
+            'provider'              => 'google',
+            'plugin'                => 'analytics',
+            'scope'                 => $scope,
+            'authorizationOptions'  => $options
         ])) {
             if ($response['success']) {
                 $token = $response['token'];
-                craft()->analytics->saveToken($token);
+                craft()->analytics_authorize->saveToken($token);
                 craft()->userSession->setNotice(Craft::t("Connected to Google Account"));
             } else {
                 craft()->userSession->setError(Craft::t($response['errorMsg']));
@@ -67,6 +57,7 @@ class Analytics_AuthorizeController extends BaseController
 
         craft()->httpSession->remove('google.referer');
         $this->redirect($referer);
+
     }
 
     /**
