@@ -1,0 +1,15 @@
+{% extends "analytics/_layouts/pages" %}
+
+{% set selectedSubnavItem = "dashboard" %}
+{% set title = "Dashboard"|t %}
+
+
+{% set content %}
+
+     
+    {% for account in accounts %}
+        <p>{{ account.name }}</p>
+    {% endfor %} 
+
+
+{% endset %}

@@ -160,7 +160,9 @@ class AnalyticsPlugin extends BasePlugin
     protected function defineSettings()
     {
         return array(
-            'tokenId' => AttributeType::Number,
+            'tokenId'    => AttributeType::Number,
+            'account'  => AttributeType::Number,
+            'property' => AttributeType::Number
         );
 
     }

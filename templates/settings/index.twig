@@ -6,73 +6,86 @@
 
 {% set content %}
     
-    <h2>Settings</h2>
+   {#  <h2>Settings</h2>
     {{ settings.tokenId |inspect }}
+
+    
     
     <h2>Provider</h2>
     {{ provider |inspect }}
 
-    <h2>Account</h2>
-    {{ account |inspect }}
-    
     <h2>Token</h2>
-    {{ token |inspect }}
+    {{ token |inspect }} #}
 
+    {# <h2>Properties</h2> #}
+    {# {{ properties |inspect }} #}
 
-    {# 'provider' => false,
-    'account' => false,
-    'token' => false,
-    'error' => false,
-    'settings #}
+    <h2>Account</h2>
+    {{ accounts |inspect }}
 
     {% import "_includes/forms" as forms %}
 
-    {# <form method="post" action="" accept-charset="UTF-8">
+    <form method="post" action="" accept-charset="UTF-8">
         {{ getCsrfInput() }}
         <input type="hidden" name="action" value="analytics/saveSettings">
         <input type="hidden" name="redirect" value="analytics/settings" />
 
-        <h2>{{ "First setup Google Application"|t }}</h2>
-        <p>Go to <a href="https://console.developers.google.com/" target="_blank">Google Developer Console</a> and create a new project.</p>
+        <div class="field">
+          <div class="heading">
+            <label for="type">Google Analytics Account</label>
+          </div>
+          <div class="input">
+            <div class="select">
+                {% set accountId = settings['account']['accountId'] is defined ? settings['account']['accountId'] : '' %}
+                <select id="{{ namespacedId }}-accountId" name="account">
+                    {% for key, option in accounts %}
+                        {% set optionLabel = (option.name is defined ? option.name : option) %}
+                        {% set optionValue = (option.id is defined ? option.id : key) %}
+                      <option value="{{ optionValue }}"{% if optionValue == accountId %} selected{% endif %}>{{ optionLabel }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+          </div>
+        </div>
 
-        {{ forms.textField({
-            label: 'Web Origin'|t,
-            value: siteUrl,
-            readonly: true,
-        }) }}
-
-        {{ forms.textField({
-            label: 'Redirect URI'|t,
-            value: siteUrl, 
-            readonly: true,
-        }) }}
-
-
-        {{ forms.textField({
-            label: 'Client ID'|t,
-            required: true,
-            name: 'settings[clientId]',
-            placeholder: 'Enter Client ID'|t,
-            value: settings.clientId is defined ? settings.clientId : null,
-            errors: settings.clientId is defined ? settings.errors('clientId') : null
-        }) }}
-
-        {{ forms.textField({
-            label: 'Client Secret'|t,
-            required: true,
-            name: 'settings[clientSecret]',
-            placeholder: 'Enter Client Secret'|t,
-            value: settings.clientSecret is defined ? settings.clientSecret : null,
-            errors: settings.clientSecret is defined ? settings.errors('clientSecret') : null
-        }) }}
+        <div class="field">
+          <div class="heading">
+            <label for="type">Web Properties</label>
+          </div>
+          <div class="input">
+            <div class="select">
+                {% set propertyId = settings['property']['propertyId'] is defined ? settings['property']['propertyId'] : '' %}
+                <select id="{{ namespacedId }}-propertyId" name="property"></select>
+            </div>
+          </div>
+        </div>
 
         <div class="buttons">
-            <input class="btn submit" type="submit" value="{{ 'Save Application Settings'|t }}">
+            <input class="btn submit" type="submit" value="{{ 'Save Account'|t }}">
         </div>
 
         <hr />
 
-    </form> #}
+    </form>
+
+    <button class="btn submit" id="analyticsGetProperties">{{ 'Get Properties'|t }}</button>
+
+    {% includejs %}
+      new Craft.GoogleAnalyticsProperty(
+        "{{ accountId }}",
+        "{{ propertyId }}",
+        "{{ namespacedId }}-propertyId"
+      );
+    {% endincludejs %}
+
+    {# {% includejs %}
+      new Craft.GoogleAnalyticsProperty(
+        "{{ id|namespaceInputId|e('js') }}",
+        "{{ name|namespaceInputName|e('js') }}",
+        "{{ fieldId|e('js') }}",
+        "{{ elementId|e('js') }}"
+      );
+    {% endincludejs %} #}
 
 
 
@@ -83,6 +96,5 @@
      <a class="btn submit" href="{{ actionUrl('analytics/authorize/connect') }}">{{"Connect to Google"|t}}</a>
    {% endif %}
 
-  
 
 {% endset %}

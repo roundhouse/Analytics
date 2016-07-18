@@ -26,75 +26,112 @@ class AnalyticsController extends BaseController
     // Public Methods
     // =========================================================================
     
+    // Dashboard
+    public function actionIndex()
+    {
+        $plugin     = craft()->plugins->getPlugin('analytics');
+        $provider   = craft()->oauth->getProvider('google');
+        $token      = craft()->analytics->getToken();
+
+        $dateNow = DateTimeHelper::currentTimeStamp();
+        $variables['date'] = $dateNow;
+
+        $this->renderTemplate('analytics/dashboard/index', $variables);
+    }
+
     // Settings Index
     public function actionSettings()
     {
+        // Load scripts
+        craft()->templates->includeJsResource('analytics/js/Analytics_Accounts.js');
+
         $plugin = craft()->plugins->getPlugin('analytics');
         $provider = craft()->oauth->getProvider('google');
-
-        $variables = array(
-            'provider' => false,
-            'account' => false,
-            'token' => false,
-            'error' => false,
-            'settings' => $plugin->getSettings()
-        );
-
+        $token = craft()->analytics_authorize->getToken();
 
         if ($provider && $provider->isConfigured()) {
             $token = craft()->analytics_authorize->getToken();
             if ($token) {
                 $variables['token'] = $token;
                 $variables['provider'] = $provider;
-
-                $account = $provider->getAccount($token);
-                $variables['account'] = $account;
             }
         }
+
+        // Get Analytics Accounts
+        $accounts = craft()->analytics_managementAccounts->getManagementAccounts($token);
+        $variables['accounts'] = $accounts;
+        
+        $variables['settings'] = $plugin->getSettings();
+
+        // Namespacing
+        $id = craft()->templates->formatInputId('analytics');
+        $namespacedId = craft()->templates->namespaceInputId($id);
+        $variables['id'] = $id;
+        $variables['namespacedId'] = $namespacedId;
 
         $this->renderTemplate('analytics/settings/index', $variables);
     }
 
-    // /**
-    //  * @return array
-    //  */
-    // public function actionIndex()
-    // {
-    //     // $plugin     = craft()->plugins->getPlugin('analytics');
-    //     // $provider   = craft()->oauth->getProvider('google');
-    //     // $token      = craft()->analytics->getToken();
+    // Get Web Properties
+    public function actionGetWebProperties()
+    {
+        $provider = craft()->oauth->getProvider('google');
+        $token = craft()->analytics_authorize->getToken();
 
-    //     // Variables
-    //     // $variables['token'] = '';
+        if ($provider && $provider->isConfigured()) {
+            $token = craft()->analytics_authorize->getToken();
+            if ($token) {
+                $variables['token'] = $token;
+                $variables['provider'] = $provider;
+            }
+        }
 
-    //     // if ($token) {
-    //     //     $variables['token'] = $token;
-    //     //     $token->refreshToken;
-    //     // }
-    //     //  Google api access
-    //     // $client = new Google_Client();
-    //     // $client->setAccessToken($token->accessToken);
+        $accountId = craft()->request->getPost('accountId');
+        $properties = craft()->analytics_managementAccounts->getManagementWebProperties($token, $accountId);
+        $this->returnJson($properties);
+    }
 
-    //     // // $expiry = getDate().now + $token->endOfLife;
+    // Get Web Property
+    public function actionGetWebProperty()
+    {
+        $provider = craft()->oauth->getProvider('google');
+        $token = craft()->analytics_authorize->getToken();
 
-    //     // // var_dump($token->refreshToken);
+        if ($provider && $provider->isConfigured()) {
+            $token = craft()->analytics_authorize->getToken();
+            if ($token) {
+                $variables['token'] = $token;
+                $variables['provider'] = $provider;
+            }
+        }
 
-    //     // if ($token->endOfLife < $dateNow) {
-    //     //     var_dump('token exprired');
-    //     // } else {
-    //     //     var_dump('token is valid');
-    //     // }
+        $accountId = craft()->request->getPost('accountId');
+        $propertyId = craft()->request->getPost('propertyId');
+        $properties = craft()->analytics_managementAccounts->getManagementWebProperties($token, $accountId, $propertyId);
+        $this->returnJson($properties);
+    }
 
+    // Save Plugin Settings
+    public function actionSaveSettings()
+    {
+        $accountId = craft()->request->getPost('account');
+        $propertyId = craft()->request->getPost('property');
 
-    //     // die();
+        $plugin = craft()->plugins->getPlugin('analytics');
+        $settings = $plugin->getSettings();
 
-    //     // $accounts = craft()->analytics_managementAccounts->getManagementAccounts($token);
-    //     // $variables['accounts'] = $accounts;
-        
-        
-    //     $dateNow = DateTimeHelper::currentTimeStamp();
-    //     $variables['date'] = $dateNow;
+        $account = [
+            'accountId' => $accountId,
+        ];
 
-    //     $this->renderTemplate('analytics/pages/index', $variables);
-    // }
+        $property = [
+            'propertyId' => $propertyId,
+        ];
+
+        $settings->account = $account;
+        $settings->property = $property;
+
+        craft()->plugins->savePluginSettings($plugin, JsonHelper::encode($settings));
+
+    }
 }

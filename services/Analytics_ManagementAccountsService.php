@@ -21,25 +21,51 @@ class Analytics_ManagementAccountsService extends BaseApplicationComponent
     // Public Methods
     // =========================================================================
 
-    /**
-     * @param  int $token    Oauth Token
-     * @return array $accounts    List Of Management Accounts
-     */
     public function getManagementAccounts($token)
     {
         // Authorize
         $client = new Google_Client();
-        $client->setAccessToken($token->accessToken);
 
+        $client->setAccessToken($token->accessToken);
 
         // Get Analytics
         $analyticsService = new Google_Service_Analytics($client);
-        $managementAccounts = $analyticsService->management_accounts->listManagementAccounts('~all');
+        $managementAccounts = $analyticsService->management_accounts->listManagementAccounts();
         $accounts = [];
 
         foreach ($managementAccounts['items'] as $account) {
             $accounts[] = [ 'id' => $account['id'], 'name' => $account['name'] ];
         }
         return $accounts;
+    }
+
+    public function getManagementWebProperties($token, $accountId)
+    {
+        // Authorize
+        $client = new Google_Client();
+        $client->setAccessToken($token->accessToken);
+
+        // Get Analytics
+        $analyticsService = new Google_Service_Analytics($client);
+        $managementProperties = $analyticsService->management_webproperties->listManagementWebproperties($accountId);
+        $webProperties = [];
+
+        foreach ($managementProperties['items'] as $account) {
+            $webProperties[] = [ 'id' => $account['id'], 'name' => $account['name'] ];
+        }
+        return $webProperties;
+    }
+
+    public function getWebProperty($token, $accountId, $propertyId)
+    {
+        // Authorize
+        $client = new Google_Client();
+        $client->setAccessToken($token->accessToken);
+
+        // Get Property
+        $analyticsService = new Google_Service_Analytics($client);
+        $managementProperties = $analyticsService->management_webproperties->get($accountId, $propertyId);
+
+        return $property;
     }
 }

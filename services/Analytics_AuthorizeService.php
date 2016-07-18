@@ -39,14 +39,10 @@ class Analytics_AuthorizeService extends BaseApplicationComponent
     // Get Token
     public function getToken()
     {
-        if ($this->token) {
-            return $this->token;
-        } else {
-            $plugin = craft()->plugins->getPlugin('analytics');
-            $tokenId = $plugin->getSettings()->tokenId;
-            $token = craft()->oauth->getTokenById($tokenId);
-            return $token;
-        }
+        $plugin = craft()->plugins->getPlugin('analytics');
+        $tokenId = $plugin->getSettings()->tokenId;
+        $token = craft()->oauth->getTokenById($tokenId);
+        return $token;
     }
 
     // Purge Token
