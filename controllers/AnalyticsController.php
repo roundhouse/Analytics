@@ -42,8 +42,9 @@ class AnalyticsController extends BaseController
     // Settings Index
     public function actionSettings()
     {
-        // Load scripts
+        // Load scripts & styles
         craft()->templates->includeJsResource('analytics/js/Analytics_Accounts.js');
+        craft()->templates->includeCssResource('analytics/css/AnalyticsSettings.css');
 
         $plugin = craft()->plugins->getPlugin('analytics');
         $provider = craft()->oauth->getProvider('google');
@@ -60,7 +61,7 @@ class AnalyticsController extends BaseController
         // Get Analytics Accounts
         $accounts = craft()->analytics_managementAccounts->getManagementAccounts($token);
         $variables['accounts'] = $accounts;
-        
+
         $variables['settings'] = $plugin->getSettings();
 
         // Namespacing

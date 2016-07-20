@@ -1,17 +1,21 @@
 {% extends "analytics/_layouts/settings" %}
 
 {% set selectedSubnavItem = "Settings" %}
+{% set bodyClass = "analytics analytics-settings"|t %}
 {% set title = "Settings"|t %}
 
-
 {% set content %}
-    
-   {#  <h2>Settings</h2>
-    {{ settings.tokenId |inspect }}
 
+  {% set namespacedId = namespacedId is defined ? namespacedId : '' %}
+  {% set accounts = accounts  is defined ? accounts  : [] %}
+  {% set token = token is defined ? token : '' %}
+    
+    {# <h2>Settings</h2>
+    {{ settings |inspect }}
+ #}
     
     
-    <h2>Provider</h2>
+   {#  <h2>Provider</h2>
     {{ provider |inspect }}
 
     <h2>Token</h2>
@@ -20,8 +24,8 @@
     {# <h2>Properties</h2> #}
     {# {{ properties |inspect }} #}
 
-    <h2>Account</h2>
-    {{ accounts |inspect }}
+   {#  <h2>Account</h2>
+    {{ accounts |inspect }} #}
 
     {% import "_includes/forms" as forms %}
 
@@ -67,8 +71,10 @@
         <hr />
 
     </form>
-
-    <button class="btn submit" id="analyticsGetProperties">{{ 'Get Properties'|t }}</button>
+    
+    {% if settings.account %}
+      <button class="btn submit" id="analyticsGetProperties">{{ 'Get Properties'|t }}</button>
+    {% endif %}
 
     {% includejs %}
       new Craft.GoogleAnalyticsProperty(

@@ -36,23 +36,25 @@ Craft.GoogleAnalyticsProperty = Garnish.Base.extend(
       fieldId: this.fieldId
     };
 
-    console.log(data);
+    console.log(data.accountId);
 
-    // Get Properties
-    Craft.postActionRequest('analytics/getWebProperty', data, $.proxy(function(response, textStatus)
-    {
-      console.log(response);
-      $.each(response, function (index, value) {
-        console.log(value);
-        $('#analytics-propertyId').append($('<option>', { 
-            value: value.id,
-            text : value.name 
-        }));
-      });
+    if (data.accountId) {
+      // Get Properties
+      Craft.postActionRequest('analytics/getWebProperty', data, $.proxy(function(response, textStatus)
+      {
+        console.log(response);
+        $.each(response, function (index, value) {
+          console.log(value);
+          $('#analytics-propertyId').append($('<option>', { 
+              value: value.id,
+              text : value.name 
+          }));
+        });
 
-      $('#analytics-propertyId').val(this.propertyId);
+        $('#analytics-propertyId').val(this.propertyId);
 
-    }, this));
+      }, this));
+    }
     // ----------------------------------
 
 
