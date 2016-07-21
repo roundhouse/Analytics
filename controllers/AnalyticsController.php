@@ -31,10 +31,15 @@ class AnalyticsController extends BaseController
     {
         $plugin     = craft()->plugins->getPlugin('analytics');
         $provider   = craft()->oauth->getProvider('google');
-        $token      = craft()->analytics->getToken();
+        $token      = craft()->analytics_authorize->getToken();
 
-        $dateNow = DateTimeHelper::currentTimeStamp();
-        $variables['date'] = $dateNow;
+        if ($provider && $provider->isConfigured()) {
+            $token = craft()->analytics_authorize->getToken();
+            if ($token) {
+                $variables['token'] = $token;
+                $variables['provider'] = $provider;
+            }
+        }
 
         $this->renderTemplate('analytics/dashboard/index', $variables);
     }
@@ -43,7 +48,7 @@ class AnalyticsController extends BaseController
     public function actionSettings()
     {
         // Load scripts & styles
-        craft()->templates->includeJsResource('analytics/js/Analytics_Accounts.js');
+        craft()->templates->includeJsResource('analytics/js/AnalyticsSettings.js');
         craft()->templates->includeCssResource('analytics/css/AnalyticsSettings.css');
 
         $plugin = craft()->plugins->getPlugin('analytics');

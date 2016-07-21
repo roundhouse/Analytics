@@ -10,22 +10,7 @@
   {% set accounts = accounts  is defined ? accounts  : [] %}
   {% set token = token is defined ? token : '' %}
     
-    {# <h2>Settings</h2>
-    {{ settings |inspect }}
- #}
     
-    
-   {#  <h2>Provider</h2>
-    {{ provider |inspect }}
-
-    <h2>Token</h2>
-    {{ token |inspect }} #}
-
-    {# <h2>Properties</h2> #}
-    {# {{ properties |inspect }} #}
-
-   {#  <h2>Account</h2>
-    {{ accounts |inspect }} #}
 
     {% import "_includes/forms" as forms %}
 
@@ -34,54 +19,54 @@
         <input type="hidden" name="action" value="analytics/saveSettings">
         <input type="hidden" name="redirect" value="analytics/settings" />
 
-        <div class="field">
-          <div class="heading">
-            <label for="type">Google Analytics Account</label>
-          </div>
-          <div class="input">
-            <div class="select">
-                {% set accountId = settings['account']['accountId'] is defined ? settings['account']['accountId'] : '' %}
-                <select id="{{ namespacedId }}-accountId" name="account">
-                    {% for key, option in accounts %}
-                        {% set optionLabel = (option.name is defined ? option.name : option) %}
-                        {% set optionValue = (option.id is defined ? option.id : key) %}
-                      <option value="{{ optionValue }}"{% if optionValue == accountId %} selected{% endif %}>{{ optionLabel }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-          </div>
-        </div>
+        {# SELECT ACCOUNT #}
+        <section class="select-account">
+            {% set accountId = settings['account']['accountId'] is defined ? settings['account']['accountId'] : '' %}
+            <h1>Select Account to Track</h1>       
+            <div class="account-toggle-wrapper">
+            {% for key, option in accounts %}
+                <div class="account-toggle">
+                    {% set optionLabel = (option.name is defined ? option.name : option) %}
+                    {% set optionValue = (option.id is defined ? option.id : key) %}
+                    <input type="radio" name="account" value="{{ optionValue }}" {% if accountId == optionValue %}checked{% endif %}>
+                    <div class="cover"><label>{{ optionLabel }}</label></div>
+                </div>
+            {% endfor %}
+            </div> 
+        </section>
 
-        <div class="field">
-          <div class="heading">
-            <label for="type">Web Properties</label>
-          </div>
-          <div class="input">
-            <div class="select">
-                {% set propertyId = settings['property']['propertyId'] is defined ? settings['property']['propertyId'] : '' %}
-                <select id="{{ namespacedId }}-propertyId" name="property"></select>
-            </div>
-          </div>
-        </div>
+        {# SELECT WEB PROPERTY #}
+        <section class="select-property">
+            {% set propertyId = settings['property']['propertyId'] is defined ? settings['property']['propertyId'] : '' %}
+            <h1>Select Profile <div class="spinner hidden"></div></h1>       
+            <div class="account-toggle-wrapper property-toggles"></div>
+
+        </section>
+
 
         <div class="buttons">
-            <input class="btn submit" type="submit" value="{{ 'Save Account'|t }}">
+            <input class="btn submit" type="submit" value="{{ 'Save Settings'|t }}">
         </div>
 
         <hr />
 
     </form>
     
-    {% if settings.account %}
+    {# {% if settings.account %}
       <button class="btn submit" id="analyticsGetProperties">{{ 'Get Properties'|t }}</button>
-    {% endif %}
+    {% endif %} #}
 
     {% includejs %}
-      new Craft.GoogleAnalyticsProperty(
+        var data = {
+            accountId: "{{ accountId }}",
+            propertyId: "{{ propertyId }}",
+            namespaceId: "{{ namespacedId }}-propertyId"
+        };
+      {# new Craft.GoogleAnalyticsProperty(
         "{{ accountId }}",
         "{{ propertyId }}",
         "{{ namespacedId }}-propertyId"
-      );
+      ); #}
     {% endincludejs %}
 
     {# {% includejs %}
